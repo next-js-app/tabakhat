@@ -16,6 +16,10 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        cormorant: ['var(--font-cormorant)'],
+        inter: ['var(--font-inter)'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

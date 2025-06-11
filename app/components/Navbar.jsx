@@ -2,22 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,67 +10,56 @@ export function Navbar() {
 
   const navItems = [
     { href: "/", label: "Home" },
-    { href: "/recipesId", label: "Recipe" },
+    { href: "/recipes", label: "Recipes" },
     { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
     { href: "/wishlist", label: "Wishlist" },
   ];
 
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="w-full border-b bg-[#FFE353]">
-      <div className="container flex h-16 items-center justify-between px-4">
-        <div className="flex items-center">
-          <Link href="/" className="text-xl font-bold text-gray-900">
-            Tabakhat App
-          </Link>
-        </div>
+    <nav className="bg-gradient-to-r from-zinc-900 to-zinc-800 border-zinc-700">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+          <img src="images/logo.png" className="h-12" alt="Logo" />
+          <span className="font-cormorant text-3xl font-semibold text-white whitespace-nowrap tracking-wide">Tabakhat</span>
+        </Link>
+        
+        <button
+          onClick={toggleMenu}
+          type="button"
+          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-zinc-300 rounded-lg md:hidden hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-600"
+          aria-controls="navbar-default"
+          aria-expanded={isOpen}
+        >
+          <span className="sr-only">Open main menu</span>
+          <Menu className="w-5 h-5" />
+        </button>
 
-        {/* Desktop Navigation */}
-        <NavigationMenu className="hidden md:block">
-          <NavigationMenuList className="flex gap-6">
+        <div 
+          className={cn(
+            "w-full md:block md:w-auto",
+            isOpen ? "block" : "hidden"
+          )} 
+          id="navbar-default"
+        >
+          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-zinc-700 rounded-lg bg-zinc-800 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-transparent">
             {navItems.map((item) => (
-              <NavigationMenuItem key={item.href}>
+              <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
-                    "bg-[#FFE353] hover:bg-[#FFE353]/90 px-4 py-2 rounded-md"
-                  )}
+                  className="block py-2 px-3 text-zinc-300 rounded-sm hover:bg-zinc-700 md:hover:bg-transparent md:border-0 md:hover:text-white md:p-0 transition-colors duration-200 font-inter"
                 >
                   {item.label}
                 </Link>
-              </NavigationMenuItem>
+              </li>
             ))}
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        {/* Mobile Navigation */}
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <button className="p-2 hover:bg-[#FFE353]/90 rounded-md">
-              <Menu className="h-6 w-6" />
-            </button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] bg-[#FFE353]">
-            <SheetHeader>
-              <SheetTitle className="text-xl font-bold text-gray-900">
-                Menu
-              </SheetTitle>
-            </SheetHeader>
-            <nav className="flex flex-col gap-4 mt-8">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium hover:text-primary px-4 py-2 rounded-md hover:bg-[#FFE353]/90"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </SheetContent>
-        </Sheet>
+          </ul>
+        </div>
       </div>
-    </div>
+    </nav>
   );
 }
