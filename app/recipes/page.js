@@ -8,9 +8,10 @@ export default function RecipesPage() {
   const [meals, setMeals] = useState([]);
   const [filteredMeals, setFilteredMeals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterLoading, setFilterLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [categories, setCategories] = useState([]);
   const [areas, setAreas] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -20,21 +21,12 @@ export default function RecipesPage() {
 
   const searchInputRef = useRef(null);
 
-  // Debounce search term
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
   const fetchMeals = useCallback(async () => {
     try {
-      setLoading(true);
+      setFilterLoading(true);
       setError(null);
 
-      // Build the API URL based on filters
+      // Build the API URL based on filters only (not search)
       let apiUrl = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
 
       if (selectedCategory) {
@@ -45,10 +37,6 @@ export default function RecipesPage() {
         apiUrl = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${encodeURIComponent(
           selectedArea
         )}`;
-      } else if (debouncedSearchTerm) {
-        apiUrl = `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(
-          debouncedSearchTerm
-        )}`;
       }
 
       const response = await fetch(apiUrl);
@@ -56,6 +44,7 @@ export default function RecipesPage() {
       if (!response.ok) {
         throw new Error("Failed to fetch meals");
       }
+
       const data = await response.json();
 
       if (data.meals) {
@@ -79,21 +68,64 @@ export default function RecipesPage() {
             })
           );
           setMeals(detailedMeals);
-          setFilteredMeals(detailedMeals);
         } else {
           setMeals(data.meals);
-          setFilteredMeals(data.meals);
         }
       } else {
         setMeals([]);
-        setFilteredMeals([]);
       }
     } catch (err) {
       setError(err.message);
     } finally {
+      setFilterLoading(false);
       setLoading(false);
     }
-  }, [debouncedSearchTerm, selectedCategory, selectedArea]);
+  }, [selectedCategory, selectedArea]);
+
+  const fetchSearchResults = useCallback(
+    async (searchQuery) => {
+      if (!searchQuery.trim()) {
+        setFilteredMeals(meals);
+        return;
+      }
+
+      try {
+        setSearchLoading(true);
+
+        const response = await fetch(
+          `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(
+            searchQuery
+          )}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to search meals");
+        }
+
+        const data = await response.json();
+
+        if (data.meals) {
+          setFilteredMeals(data.meals);
+        } else {
+          setFilteredMeals([]);
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+        // Fallback to client-side search
+        const filtered = meals.filter(
+          (meal) =>
+            meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            meal.strInstructions
+              ?.toLowerCase()
+              .includes(searchQuery.toLowerCase())
+        );
+        setFilteredMeals(filtered);
+      } finally {
+        setSearchLoading(false);
+      }
+    },
+    [meals]
+  );
 
   useEffect(() => {
     fetchMeals();
@@ -136,20 +168,25 @@ export default function RecipesPage() {
     fetchFilters();
   }, []);
 
+  // Apply search and ingredient filtering to the meals list
   useEffect(() => {
-    let filtered = meals;
+    if (searchTerm) {
+      fetchSearchResults(searchTerm);
+    } else {
+      let filtered = meals;
 
-    // Filter by ingredient (client-side filtering)
-    if (selectedIngredient) {
-      filtered = filtered.filter((meal) =>
-        meal.strInstructions
-          ?.toLowerCase()
-          .includes(selectedIngredient.toLowerCase())
-      );
+      // Filter by ingredient (client-side)
+      if (selectedIngredient) {
+        filtered = filtered.filter((meal) =>
+          meal.strInstructions
+            ?.toLowerCase()
+            .includes(selectedIngredient.toLowerCase())
+        );
+      }
+
+      setFilteredMeals(filtered);
     }
-
-    setFilteredMeals(filtered);
-  }, [meals, selectedIngredient]);
+  }, [meals, searchTerm, selectedIngredient, fetchSearchResults]);
 
   // Keep search input focused
   useEffect(() => {
@@ -306,78 +343,84 @@ export default function RecipesPage() {
 
         {/* Recipes Grid with Localized Loading */}
         <div className="relative">
-          {loading && (
+          {(loading || filterLoading || searchLoading) && (
             <div className="flex justify-center items-center py-20">
               <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
             </div>
           )}
 
-          {!loading && filteredMeals.length === 0 && (
-            <div className="text-center py-20">
-              <div className="text-gray-400 text-6xl mb-4">🍽️</div>
-              <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-                No recipes found
-              </h2>
-              <p className="text-gray-500 mb-6">
-                Try adjusting your search terms or filters to find what you're
-                looking for
-              </p>
-              <button
-                onClick={clearFilters}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          )}
-
-          {!loading && filteredMeals.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredMeals.map((meal) => (
-                <Link
-                  href={`/recipesId/${meal.idMeal}`}
-                  key={meal.idMeal}
-                  className="group"
+          {!loading &&
+            !filterLoading &&
+            !searchLoading &&
+            filteredMeals.length === 0 && (
+              <div className="text-center py-20">
+                <div className="text-gray-400 text-6xl mb-4">🍽️</div>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+                  No recipes found
+                </h2>
+                <p className="text-gray-500 mb-6">
+                  Try adjusting your search terms or filters to find what you're
+                  looking for
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                 >
-                  <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div className="relative overflow-hidden">
-                      <img
-                        src={meal.strMealThumb}
-                        alt={meal.strMeal}
-                        className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <div className="absolute top-3 right-3">
-                        <span className="bg-black/80 text-white text-xs px-3 py-1 rounded-full font-medium">
-                          {meal.strCategory}
-                        </span>
-                      </div>
-                    </div>
+                  Clear All Filters
+                </button>
+              </div>
+            )}
 
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
-                        {meal.strMeal}
-                      </h3>
-
-                      <p className="text-gray-600 mb-4 leading-relaxed text-sm line-clamp-3">
-                        {truncateDescription(meal.strInstructions)}
-                      </p>
-
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <div className="flex items-center gap-2">
-                          <ChefHat className="w-4 h-4" />
-                          <span className="font-medium">{meal.strArea}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4" />
-                          <span>30 min</span>
+          {!loading &&
+            !filterLoading &&
+            !searchLoading &&
+            filteredMeals.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredMeals.map((meal) => (
+                  <Link
+                    href={`/recipesId/${meal.idMeal}`}
+                    key={meal.idMeal}
+                    className="group"
+                  >
+                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                      <div className="relative overflow-hidden">
+                        <img
+                          src={meal.strMealThumb}
+                          alt={meal.strMeal}
+                          className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                        <div className="absolute top-3 right-3">
+                          <span className="bg-black/80 text-white text-xs px-3 py-1 rounded-full font-medium">
+                            {meal.strCategory}
+                          </span>
                         </div>
                       </div>
+
+                      <div className="p-6">
+                        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                          {meal.strMeal}
+                        </h3>
+
+                        <p className="text-gray-600 mb-4 leading-relaxed text-sm line-clamp-3">
+                          {truncateDescription(meal.strInstructions)}
+                        </p>
+
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <div className="flex items-center gap-2">
+                            <ChefHat className="w-4 h-4" />
+                            <span className="font-medium">{meal.strArea}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            <span>30 min</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+                  </Link>
+                ))}
+              </div>
+            )}
         </div>
       </div>
     </div>
