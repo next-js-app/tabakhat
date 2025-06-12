@@ -26,7 +26,7 @@ export function Navbar() {
 
   const navItems = [
     { href: "/", label: "Home" },
-    { href: "/recipesId", label: "Recipe" },
+    { href: "/recipes", label: "Recipes" },
     { href: "/about", label: "About" },
     { href: "/wishlist", label: "Wishlist" },
   ];
