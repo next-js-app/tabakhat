@@ -117,3 +117,6 @@
     @apply bg-background text-foreground;
   }
 }
+@layer components {
+  /* --- REPLACE your existing .card-shape with this one --- */
+}
