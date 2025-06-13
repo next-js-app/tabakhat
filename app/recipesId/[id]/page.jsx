@@ -1,43 +1,142 @@
-import { Badge, ChefHat, Clock, Tag, Users, Youtube } from "lucide-react";
+'use client';
+
+import { Badge, ChefHat, Clock, Tag, Users, Youtube, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-export default function page() {
-  const recipeData = {
-    idMeal: "52772",
-    strMeal: "Teriyaki Chicken Casserole",
-    strCategory: "Chicken",
-    strArea: "Japanese",
-    strInstructions:
-      "Preheat oven to 350° F. Spray a 9x13-inch baking pan with non-stick spray.\r\nCombine soy sauce, ½ cup water, brown sugar, ginger and garlic in a small saucepan and cover. Bring to a boil over medium heat. Remove lid and cook for one minute once boiling.\r\nMeanwhile, stir together the corn starch and 2 tablespoons of water in a separate dish until smooth. Once sauce is boiling, add mixture to the saucepan and stir to combine. Cook until the sauce starts to thicken then remove from heat.\r\nPlace the chicken breasts in the prepared pan. Pour one cup of the sauce over top of chicken. Place chicken in oven and bake 35 minutes or until cooked through. Remove from oven and shred chicken in the dish using two forks.\r\n*Meanwhile, steam or cook the vegetables according to package directions.\r\nAdd the cooked vegetables and rice to the casserole dish with the chicken. Add most of the remaining sauce, reserving a bit to drizzle over the top when serving. Gently toss everything together in the casserole dish until combined. Return to oven and cook 15 minutes. Remove from oven and let stand 5 minutes before serving. Drizzle each serving with remaining sauce. Enjoy!",
-    strMealThumb:
-      "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg",
-    strTags: "Meat,Casserole",
-    strYoutube: "https://www.youtube.com/watch?v=4aZr5hZXP_s",
-    ingredients: [
-      { name: "soy sauce", measure: "3/4 cup" },
-      { name: "water", measure: "1/2 cup" },
-      { name: "brown sugar", measure: "1/4 cup" },
-      { name: "ground ginger", measure: "1/2 teaspoon" },
-      { name: "minced garlic", measure: "1/2 teaspoon" },
-      { name: "cornstarch", measure: "4 Tablespoons" },
-      { name: "chicken breasts", measure: "2" },
-      { name: "stir-fry vegetables", measure: "1 (12 oz.)" },
-      { name: "brown rice", measure: "3 cups" },
-    ],
-  };
-  //   const { id } = useParams();
+import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+
+export default function RecipeDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const [recipeData, setRecipeData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${params.id}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch recipe');
+        }
+        
+        const data = await response.json();
+        
+        if (data.meals && data.meals.length > 0) {
+          const meal = data.meals[0];
+          
+          // Extract ingredients and measures
+          const ingredients = [];
+          for (let i = 1; i <= 20; i++) {
+            const ingredient = meal[`strIngredient${i}`];
+            const measure = meal[`strMeasure${i}`];
+            
+            if (ingredient && ingredient.trim()) {
+              ingredients.push({
+                name: ingredient.trim(),
+                measure: measure ? measure.trim() : 'To taste'
+              });
+            }
+          }
+          
+          setRecipeData({
+            ...meal,
+            ingredients
+          });
+        } else {
+          throw new Error('Recipe not found');
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.id) {
+      fetchRecipe();
+    }
+  }, [params.id]);
 
   const formatInstructions = (instructions) => {
+    if (!instructions) return [];
     return instructions.split("\r\n").filter((step) => step.trim().length > 0);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center py-20">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-600" />
+            <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+              Loading recipe...
+            </h2>
+            <p className="text-gray-500">
+              Please wait while we fetch the recipe details
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8 text-center">
+            <div className="text-red-500 text-6xl mb-4">⚠️</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Recipe Not Found
+            </h2>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => router.back()}
+                className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+              >
+                Go Back
+              </button>
+              <Link
+                href="/recipes"
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Browse Recipes
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!recipeData) {
+    return null;
+  }
+
   const steps = formatInstructions(recipeData.strInstructions);
   const tags = recipeData.strTags?.split(",") || [];
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Recipes
+          </button>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-8">
-          {" "}
           <div className="lg:col-span-2 space-y-8">
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
@@ -93,11 +192,11 @@ export default function page() {
               </div>
 
               <div className="shadow-lg rounded-lg p-6 bg-white">
-                <h3 className="text-2xl">Instructions</h3>
+                <h3 className="text-2xl mb-4">Instructions</h3>
                 <div className="space-y-4 mt-4">
                   {steps.map((step, index) => (
                     <div key={index} className="flex gap-4">
-                      <div className="flex-shrink-0 w-8 h-8  bg-black rounded-full flex items-center justify-center text-lg text-white">
+                      <div className="flex-shrink-0 w-8 h-8 bg-black rounded-full flex items-center justify-center text-lg text-white">
                         {index + 1}
                       </div>
                       <p className="text-foreground leading-relaxed pt-1">
@@ -110,10 +209,10 @@ export default function page() {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="shadow-lg rounded-lg p-6 bg-white  top-8">
+            <div className="shadow-lg rounded-lg p-6 bg-white top-8">
               <h3 className="text-2xl mb-4">Ingredients</h3>
               <hr />
-              <div className=" mt-4">
+              <div className="mt-4">
                 <ul className="space-y-3">
                   {recipeData.ingredients.map((ingredient, index) => (
                     <li
@@ -131,10 +230,10 @@ export default function page() {
                 </ul>
               </div>
             </div>
-            <div className="shadow-lg rounded-lg p-6 bg-white  top-8">
+            <div className="shadow-lg rounded-lg p-6 bg-white top-8">
               <h3 className="text-2xl mb-4">Recipe Info</h3>
               <hr />
-              <div className=" mt-4">
+              <div className="mt-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Category</span>
                   <span className="font-medium">{recipeData.strCategory}</span>
@@ -162,4 +261,4 @@ export default function page() {
       </div>
     </div>
   );
-}
+} 
