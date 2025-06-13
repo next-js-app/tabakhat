@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Clock, ChefHat, Search, Loader2 } from "lucide-react";
+import { useWishlist } from "@/hooks/use-wishlist";
+import { RecipeCard } from "@/app/components/RecipeCard";
 
 export default function RecipesPage() {
   const [meals, setMeals] = useState([]);
@@ -20,6 +22,8 @@ export default function RecipesPage() {
   const [selectedIngredient, setSelectedIngredient] = useState("");
 
   const searchInputRef = useRef(null);
+  const { wishlist, addToWishlist, removeFromWishlist, isHydrated } =
+    useWishlist();
 
   const fetchMeals = useCallback(async () => {
     try {
@@ -194,12 +198,6 @@ export default function RecipesPage() {
       searchInputRef.current.focus();
     }
   }, []);
-
-  const truncateDescription = (text, maxLength = 80) => {
-    if (!text) return "No description available";
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + "...";
-  };
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -377,47 +375,9 @@ export default function RecipesPage() {
             filteredMeals.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredMeals.map((meal) => (
-                  <Link
-                    href={`/recipesId/${meal.idMeal}`}
-                    key={meal.idMeal}
-                    className="group"
-                  >
-                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                      <div className="relative overflow-hidden">
-                        <img
-                          src={meal.strMealThumb}
-                          alt={meal.strMeal}
-                          className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                        <div className="absolute top-3 right-3">
-                          <span className="bg-black/80 text-white text-xs px-3 py-1 rounded-full font-medium">
-                            {meal.strCategory}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="p-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
-                          {meal.strMeal}
-                        </h3>
-
-                        <p className="text-gray-600 mb-4 leading-relaxed text-sm line-clamp-3">
-                          {truncateDescription(meal.strInstructions)}
-                        </p>
-
-                        <div className="flex items-center justify-between text-sm text-gray-500">
-                          <div className="flex items-center gap-2">
-                            <ChefHat className="w-4 h-4" />
-                            <span className="font-medium">{meal.strArea}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4" />
-                            <span>30 min</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
+                  <div key={meal.idMeal} className="h-full">
+                    <RecipeCard recipe={meal} />
+                  </div>
                 ))}
               </div>
             )}

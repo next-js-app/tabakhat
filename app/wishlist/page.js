@@ -19,18 +19,27 @@ const containerVariants = {
   },
 };
 
+const itemVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.8, transition: { duration: 0.2 } },
+};
+
 const WishlistPage = () => {
-  const { wishlist } = useWishlist();
+  const { wishlist, isHydrated } = useWishlist();
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchWishlistRecipes = async () => {
+      if (!isHydrated) return;
+
       if (wishlist.length === 0) {
         setRecipes([]);
         setIsLoading(false);
         return;
       }
+
       setIsLoading(true);
       const recipePromises = wishlist.map((id) =>
         fetch(
@@ -45,9 +54,9 @@ const WishlistPage = () => {
       setIsLoading(false);
     };
     fetchWishlistRecipes();
-  }, [wishlist]);
+  }, [wishlist, isHydrated]);
 
-  if (isLoading) {
+  if (!isHydrated || isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <Spinner size={48} />
@@ -61,7 +70,7 @@ const WishlistPage = () => {
   return (
     <div className="container mx-auto p-4 sm:p-6">
       <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {recipes.length > 0 ? (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
@@ -69,11 +78,21 @@ const WishlistPage = () => {
             initial="hidden"
             animate="visible"
           >
-            {recipes.map((recipe) => (
-              <div key={recipe.idMeal} className="h-full">
-                <RecipeCard recipe={recipe} />
-              </div>
-            ))}
+            <AnimatePresence mode="popLayout">
+              {recipes.map((recipe) => (
+                <motion.div
+                  key={recipe.idMeal}
+                  className="h-full"
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  layout
+                >
+                  <RecipeCard recipe={recipe} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </motion.div>
         ) : (
           <motion.div
@@ -87,7 +106,7 @@ const WishlistPage = () => {
               Explore recipes and add your favorites!
             </p>
             <Button asChild>
-              <Link href="/">Explore Recipes</Link>
+              <Link href="/recipes">Explore Recipes</Link>
             </Button>
           </motion.div>
         )}

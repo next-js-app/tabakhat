@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -13,11 +13,19 @@ import { useWishlist } from "@/hooks/use-wishlist";
  * @param {{ recipe: { idMeal: string; strMeal: string; strMealThumb:string; strCategory: string; } }} props
  */
 export const RecipeCard = ({ recipe }) => {
-  const { addToWishlist, removeFromWishlist, isItemInWishlist } = useWishlist();
-  const isInWishlist = isItemInWishlist(recipe.idMeal);
+  const { addToWishlist, removeFromWishlist, isItemInWishlist, isHydrated } = useWishlist();
+  const [isInWishlist, setIsInWishlist] = useState(false);
 
   const cardRef = useRef(null);
   const [spotlightStyle, setSpotlightStyle] = useState({});
+
+  // Update local state when wishlist changes
+  useEffect(() => {
+    if (isHydrated) {
+      const currentState = isItemInWishlist(recipe.idMeal);
+      setIsInWishlist(currentState);
+    }
+  }, [isHydrated, isItemInWishlist, recipe.idMeal]);
 
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
@@ -30,12 +38,16 @@ export const RecipeCard = ({ recipe }) => {
     });
   };
 
-  const handleWishlistToggle = (e) => {
-    e.preventDefault();
-    if (isInWishlist) {
-      removeFromWishlist(recipe.idMeal);
-    } else {
+  const handleWishlistToggle = () => {
+    if (!isHydrated) return;
+    
+    const newState = !isInWishlist;
+    setIsInWishlist(newState);
+    
+    if (newState) {
       addToWishlist(recipe.idMeal);
+    } else {
+      removeFromWishlist(recipe.idMeal);
     }
   };
 
@@ -71,19 +83,27 @@ export const RecipeCard = ({ recipe }) => {
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleWishlistToggle}
-          className="absolute top-3 right-3 z-20 h-9 w-9 rounded-full bg-white/30 backdrop-blur-sm transition-all hover:bg-white/50"
-          aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
-        >
-          <Heart
-            className={`h-5 w-5 transition-colors fill-current stroke-current ${
-              isInWishlist ? "text-yellow-400" : "text-white/80"
-            }`}
-          />
-        </Button>
+        {isHydrated && (
+          <div
+            onClick={handleWishlistToggle}
+            className="absolute top-3 right-3 z-20 h-9 w-9 rounded-full bg-white/30 backdrop-blur-sm transition-all hover:bg-white/50 flex items-center justify-center cursor-pointer"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleWishlistToggle();
+              }
+            }}
+            aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart
+              className={`h-5 w-5 transition-colors fill-current stroke-current ${
+                isInWishlist ? "text-yellow-400" : "text-white/80"
+              }`}
+            />
+          </div>
+        )}
 
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white z-20">
           <p className="font-semibold text-brand-yellow text-sm">
@@ -98,7 +118,7 @@ export const RecipeCard = ({ recipe }) => {
             size="sm"
             className="border border-yellow-400 bg-transparent opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0  group-hover:shadow-md transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] rounded-full"
           >
-            <Link href={`/recipes/${recipe.idMeal}`}>
+            <Link href={`/recipesId/${recipe.idMeal}`}>
               Show Details
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
