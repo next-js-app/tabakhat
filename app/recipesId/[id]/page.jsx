@@ -4,6 +4,7 @@ import { Badge, ChefHat, Clock, Tag, Users, Youtube, Loader2, ArrowLeft } from "
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { VideoModal } from "@/app/components/VideoModal";
 
 export default function RecipeDetailPage() {
   const params = useParams();
@@ -11,6 +12,7 @@ export default function RecipeDetailPage() {
   const [recipeData, setRecipeData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -170,17 +172,13 @@ export default function RecipeDetailPage() {
               </div>
 
               {recipeData.strYoutube && (
-                <a
-                  href={recipeData.strYoutube}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex"
+                <button
+                  onClick={() => setIsVideoModalOpen(true)}
+                  className="outline gap-2 inline-flex items-center rounded-md bg-gray-50 px-4 py-2 text-sm font-medium text-gray-900 ring-1 ring-gray-500/10 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500/20"
                 >
-                  <button className="outline gap-2 inline-flex items-center rounded-md bg-gray-50 px-4 py-2 text-sm font-medium text-gray-900 ring-1 ring-gray-500/10 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500/20">
-                    <Youtube className="w-4 h-4" />
-                    Watch Video Tutorial
-                  </button>
-                </a>
+                  <Youtube className="w-4 h-4" />
+                  Watch Video Tutorial
+                </button>
               )}
 
               <div className="relative overflow-hidden rounded-lg">
@@ -259,6 +257,15 @@ export default function RecipeDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {recipeData.strYoutube && (
+        <VideoModal
+          isOpen={isVideoModalOpen}
+          onClose={() => setIsVideoModalOpen(false)}
+          videoUrl={recipeData.strYoutube}
+        />
+      )}
     </div>
   );
 } 

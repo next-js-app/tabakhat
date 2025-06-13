@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, ArrowRight } from "lucide-react";
 import { useWishlist } from "@/hooks/use-wishlist";
+import toast from "react-hot-toast";
 
 /**
  * @param {{ recipe: { idMeal: string; strMeal: string; strMealThumb:string; strCategory: string; } }} props
@@ -46,8 +47,30 @@ export const RecipeCard = ({ recipe }) => {
     
     if (newState) {
       addToWishlist(recipe.idMeal);
+      toast.success(`${recipe.strMeal} added to wishlist!`, {
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: '#fff',
+          color: '#333',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          borderRadius: '8px',
+          padding: '12px 16px',
+        },
+      });
     } else {
       removeFromWishlist(recipe.idMeal);
+      toast(`${recipe.strMeal} removed from wishlist`, {
+        duration: 3000,
+        position: "bottom-right",
+        style: {
+          background: '#fff',
+          color: '#333',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          borderRadius: '8px',
+          padding: '12px 16px',
+        },
+      });
     }
   };
 
