@@ -8,6 +8,7 @@ export function Footer() {
     { href: "/", label: "Home" },
     { href: "/recipes", label: "Recipes" },
     { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
     { href: "/wishlist", label: "Wishlist" },
   ];
 
@@ -22,17 +23,27 @@ export function Footer() {
     <footer className="bg-gradient-to-r from-zinc-900 to-zinc-800 border-t border-zinc-700">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 py-12 border-b border-zinc-700">
         <div className="space-y-4 text-center md:text-left">
-          <Link href="/" className="inline-flex items-center space-x-3">
-            <img src="/images/logo.png" className="h-10" alt="Logo" />
-            <span className="font-cormorant text-2xl font-bold text-white tracking-wide">Tabakhat</span>
+          <Link href="/" className="inline-flex  items-center space-x-3">
+            <img src="/images/logo.png" className="h-12" alt="Logo" />
+           <div className="flex flex-col">
+             <span className="font-cormorant leading-0.5 mt-5 text-2xl font-bold text-white tracking-wide">
+              Tabakhat
+            </span>
+            <span className="text-xs ms-1 text-amber-300 mt-2 font-inter">
+              Cook it. Love it. Share it.
+            </span>
+           </div>
           </Link>
           <p className="text-zinc-400 text-sm font-inter">
-            Discover authentic and easy-to-follow recipes to delight your taste buds.
+            Discover authentic and easy-to-follow recipes to delight your taste
+            buds.
           </p>
         </div>
 
         <div className="space-y-4 text-center md:text-left">
-          <h3 className="text-lg font-semibold text-white font-cormorant">Quick Links</h3>
+          <h3 className="text-lg font-semibold text-white font-cormorant">
+            Quick Links
+          </h3>
           <ul className="space-y-2">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -48,7 +59,9 @@ export function Footer() {
         </div>
 
         <div className="space-y-4 text-center md:text-left">
-          <h3 className="text-lg font-semibold text-white font-cormorant">Follow Us</h3>
+          <h3 className="text-lg font-semibold text-white font-cormorant">
+            Follow Us
+          </h3>
           <div className="flex justify-center md:justify-start space-x-4">
             {socialLinks.map((social) => (
               <a

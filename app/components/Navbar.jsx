@@ -25,7 +25,10 @@ export function Navbar() {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="/images/logo.png" className="h-12" alt="Logo" />
-          <span className="font-cormorant text-3xl font-semibold text-white whitespace-nowrap tracking-wide">Tabakhat</span>
+          <div className="flex flex-col">
+            <span className="font-cormorant leading-0.5 mt-4 text-3xl font-semibold text-white whitespace-nowrap tracking-wide">Tabakhat</span>
+            <span className="text-xs ms-1 text-amber-300 mt-3 font-inter">Cook it. Love it. Share it.</span>
+          </div>
         </Link>
         
         <button
