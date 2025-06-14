@@ -25,6 +25,204 @@ const itemVariants = {
   exit: { opacity: 0, scale: 0.8, transition: { duration: 0.2 } },
 };
 
+const EmptyWishlist = () => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col items-center justify-center min-h-[60vh] text-center p-4"
+    >
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-64 h-64"
+      >
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+        </motion.div>
+
+        {/* Main illustration */}
+        <motion.svg
+          viewBox="0 0 200 200"
+          className="w-full h-full relative z-10"
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Main circle */}
+          <motion.circle
+            cx="100"
+            cy="100"
+            r="60"
+            fill="none"
+            stroke="#2e2e2e"
+            strokeWidth="2"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+          />
+
+          {/* Inner circle with amber */}
+          <motion.circle
+            cx="100"
+            cy="100"
+            r="45"
+            fill="none"
+            stroke="#ffb500"
+            strokeWidth="1.5"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1, delay: 0.3, ease: "easeInOut" }}
+          />
+
+          {/* Heart icon - larger and lower */}
+          <motion.path
+            d="M100,92 C88,80 72,80 72,97 C72,114 100,126 100,126 C100,126 128,114 128,97 C128,80 112,80 100,92 Z"
+            fill="#eb383c"
+            stroke="#eb383c"
+            strokeWidth="2"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5, ease: "easeInOut" }}
+          />
+
+          {/* Break line - larger and centered plus */}
+          <motion.path
+            d="M100,100 L100,118 M90,109 L110,109"
+            stroke="#ffb500"
+            strokeWidth="2"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 1.5, ease: "easeInOut" }}
+          />
+
+          {/* Decorative dots - alternating colors */}
+          {[...Array(8)].map((_, i) => {
+            const angle = (i * 45 * Math.PI) / 180;
+            const x = 100 + 50 * Math.cos(angle);
+            const y = 100 + 50 * Math.sin(angle);
+            return (
+              <motion.circle
+                key={i}
+                cx={x}
+                cy={y}
+                r="2"
+                fill={i % 2 === 0 ? "#2e2e2e" : "#ffb500"}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{
+                  duration: 0.3,
+                  delay: 1 + i * 0.1,
+                  ease: "easeOut",
+                }}
+              />
+            );
+          })}
+
+          {/* Floating elements - all amber */}
+          <motion.div
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2 }}
+          >
+            {[...Array(3)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-3 h-3 rounded-full"
+                style={{
+                  background: '#ffb500',
+                  top: `${30 + i * 20}%`,
+                  left: `${20 + i * 30}%`,
+                }}
+                animate={{
+                  y: [0, -10, 0],
+                  opacity: [0.5, 1, 0.5],
+                }}
+                transition={{
+                  duration: 2,
+                  delay: i * 0.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            ))}
+          </motion.div>
+        </motion.svg>
+
+        {/* Floating elements */}
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2 }}
+        >
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-4 h-4 bg-red-500 rounded-full"
+              style={{
+                top: `${30 + i * 20}%`,
+                left: `${20 + i * 30}%`,
+              }}
+              animate={{
+                y: [0, -10, 0],
+                opacity: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 2,
+                delay: i * 0.2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </motion.div>
+      </motion.div>
+
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 2.2 }}
+        className="space-y-3"
+      >
+        <h2 className="text-3xl font-bold text-zinc-700">
+          Wishlist is Empty
+        </h2>
+        <p className="text-zinc-500 text-lg max-w-md mx-auto">
+          Explore recipes and add your favorites!
+        </p>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="mt-6"
+        >
+          <Button
+            asChild
+            className="bg-amber-400 hover:bg-amber-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <Link href="/recipes">
+              Explore Recipes
+              <motion.span
+                className="inline-block ml-2"
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                →
+              </motion.span>
+            </Link>
+          </Button>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const WishlistPage = () => {
   const { wishlist, isHydrated } = useWishlist();
   const [recipes, setRecipes] = useState([]);
@@ -58,7 +256,7 @@ const WishlistPage = () => {
 
   if (!isHydrated || isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] py-12">
         <Spinner size={48} />
         <span className="mt-4 text-gray-500 text-lg font-medium">
           Loading wishlist...
@@ -69,7 +267,7 @@ const WishlistPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6">
-      <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
+      <h1 className="text-3xl font-bold text-zinc-800">My Wishlist</h1>
       <AnimatePresence mode="popLayout">
         {recipes.length > 0 ? (
           <motion.div
@@ -95,20 +293,7 @@ const WishlistPage = () => {
             </AnimatePresence>
           </motion.div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center min-h-[60vh] text-center p-4"
-          >
-            <HeartCrack className="w-24 h-24 text-gray-300 mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Your Wishlist is Empty</h2>
-            <p className="text-gray-500 mb-6">
-              Explore recipes and add your favorites!
-            </p>
-            <Button asChild>
-              <Link href="/recipes">Explore Recipes</Link>
-            </Button>
-          </motion.div>
+          <EmptyWishlist />
         )}
       </AnimatePresence>
     </div>

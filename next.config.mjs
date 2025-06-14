@@ -5,6 +5,7 @@ const nextConfig = {
   images: {
     domains: ['www.themealdb.com', 'picsum.photos'],
   },
+  reactStrictMode: true,
 };
 
 export default withFlowbiteReact(nextConfig);

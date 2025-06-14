@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { Clock, ChefHat, Search, Loader2 } from "lucide-react";
+import { Clock, ChefHat, Search, Loader2, Tag } from "lucide-react";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { RecipeCard } from "@/app/components/RecipeCard";
+import { Listbox } from '@headlessui/react';
 
 export default function RecipesPage() {
   const [meals, setMeals] = useState([]);
@@ -212,6 +213,10 @@ export default function RecipesPage() {
     }, 100);
   };
 
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(' ');
+  }
+
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -252,75 +257,106 @@ export default function RecipesPage() {
           <div className="flex flex-col lg:flex-row gap-4 items-center">
             {/* Search Bar */}
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-amber-500 w-6 h-6" />
               <input
                 ref={searchInputRef}
                 type="text"
                 placeholder="Search recipes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200"
+                className="w-full pl-12 pr-4 py-4 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-400 focus:border-amber-400 hover:border-amber-400 transition-all duration-200 text-zinc-800 bg-zinc-50 placeholder-zinc-400 text-lg shadow-sm outline-none"
               />
             </div>
 
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200 bg-white"
-              >
-                <option value="">All Categories</option>
-                {categories.map((category) => (
-                  <option
-                    key={category.idCategory}
-                    value={category.strCategory}
-                  >
-                    {category.strCategory}
-                  </option>
-                ))}
-              </select>
+              {/* Category Filter - Headless UI Listbox */}
+              <div className="relative w-full sm:w-auto">
+                <ChefHat className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5 pointer-events-none z-10" />
+                <Listbox value={selectedCategory} onChange={setSelectedCategory}>
+                  {({ open }) => (
+                    <div className="relative">
+                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-400 focus:border-amber-400 hover:border-amber-400 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
+                        <span>{selectedCategory || 'All Categories'}</span>
+                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-900 text-xs">▼</span>
+                      </Listbox.Button>
+                      <Listbox.Options className="absolute z-20 mt-2 w-full max-h-60 overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-base">
+                        <Listbox.Option key="all" value="" className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
+                          {({ selected }) => (<><span className="block truncate">All Categories</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                        </Listbox.Option>
+                        {categories.map((category) => (
+                          <Listbox.Option key={category.idCategory} value={category.strCategory} className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
+                            {({ selected }) => (<><span className="block truncate">{category.strCategory}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </div>
+                  )}
+                </Listbox>
+              </div>
 
-              <select
-                value={selectedArea}
-                onChange={(e) => setSelectedArea(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200 bg-white"
-              >
-                <option value="">All Areas</option>
-                {areas.map((area) => (
-                  <option key={area.strArea} value={area.strArea}>
-                    {area.strArea}
-                  </option>
-                ))}
-              </select>
+              {/* Area Filter - Headless UI Listbox */}
+              <div className="relative w-full sm:w-auto">
+                <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5 pointer-events-none z-10" />
+                <Listbox value={selectedArea} onChange={setSelectedArea}>
+                  {({ open }) => (
+                    <div className="relative">
+                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-400 focus:border-amber-400 hover:border-amber-400 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
+                        <span>{selectedArea || 'All Areas'}</span>
+                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-900 text-xs">▼</span>
+                      </Listbox.Button>
+                      <Listbox.Options className="absolute z-20 mt-2 w-full max-h-60 overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-base">
+                        <Listbox.Option key="all" value="" className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
+                          {({ selected }) => (<><span className="block truncate">All Areas</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                        </Listbox.Option>
+                        {areas.map((area) => (
+                          <Listbox.Option key={area.strArea} value={area.strArea} className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
+                            {({ selected }) => (<><span className="block truncate">{area.strArea}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </div>
+                  )}
+                </Listbox>
+              </div>
 
-              <select
-                value={selectedIngredient}
-                onChange={(e) => setSelectedIngredient(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200 bg-white"
-              >
-                <option value="">All Ingredients</option>
-                {ingredients.slice(0, 50).map((ingredient) => (
-                  <option
-                    key={ingredient.idIngredient}
-                    value={ingredient.strIngredient}
-                  >
-                    {ingredient.strIngredient}
-                  </option>
-                ))}
-              </select>
+              {/* Ingredient Filter - Headless UI Listbox */}
+              <div className="relative w-full sm:w-auto">
+                <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5 pointer-events-none z-10" />
+                <Listbox value={selectedIngredient} onChange={setSelectedIngredient}>
+                  {({ open }) => (
+                    <div className="relative">
+                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-400 focus:border-amber-400 hover:border-amber-400 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
+                        <span>{selectedIngredient || 'All Ingredients'}</span>
+                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-900 text-xs">▼</span>
+                      </Listbox.Button>
+                      <Listbox.Options className="absolute z-20 mt-2 w-full max-h-60 overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-base">
+                        <Listbox.Option key="all" value="" className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
+                          {({ selected }) => (<><span className="block truncate">All Ingredients</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                        </Listbox.Option>
+                        {ingredients.slice(0, 50).map((ingredient) => (
+                          <Listbox.Option key={ingredient.idIngredient} value={ingredient.strIngredient} className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
+                            {({ selected }) => (<><span className="block truncate">{ingredient.strIngredient}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </div>
+                  )}
+                </Listbox>
+              </div>
 
               {(searchTerm ||
                 selectedCategory ||
                 selectedArea ||
                 selectedIngredient) && (
-                <button
-                  onClick={clearFilters}
-                  className="px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
-                >
-                  Clear
-                </button>
-              )}
+                  <button
+                    onClick={clearFilters}
+                    className="flex items-center gap-2 px-4 py-3 bg-amber-400 text-white rounded-xl hover:bg-amber-500 transition-colors font-medium shadow-md mt-2 sm:mt-0"
+                  >
+                    <Loader2 className="w-4 h-4" />
+                    Clear
+                  </button>
+                )}
             </div>
           </div>
         </div>
@@ -335,15 +371,16 @@ export default function RecipesPage() {
             selectedCategory ||
             selectedArea ||
             selectedIngredient) && (
-            <p className="text-sm text-gray-500">Filtered results</p>
-          )}
+              <p className="text-sm text-gray-500">Filtered results</p>
+            )}
         </div>
 
         {/* Recipes Grid with Localized Loading */}
         <div className="relative">
           {(loading || filterLoading || searchLoading) && (
-            <div className="flex justify-center items-center py-20">
-              <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="w-12 h-12 animate-spin text-amber-400 mb-4" />
+              <span className="text-lg text-zinc-600 font-medium">Loading Recipes</span>
             </div>
           )}
 
@@ -352,7 +389,16 @@ export default function RecipesPage() {
             !searchLoading &&
             filteredMeals.length === 0 && (
               <div className="text-center py-20">
-                <div className="text-gray-400 text-6xl mb-4">🍽️</div>
+                <div className="text-gray-400 text-6xl mb-4">
+                  {/* Custom SVG illustration for no recipes found */}
+                  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto">
+                    <circle cx="32" cy="32" r="28" fill="#f8fafc" stroke="#ffb500" strokeWidth="2" />
+                    <ellipse cx="32" cy="44" rx="16" ry="6" fill="#e4e4e7" />
+                    <circle cx="24" cy="28" r="2" fill="#2e2e2e" />
+                    <circle cx="40" cy="28" r="2" fill="#2e2e2e" />
+                    <path d="M26 38 Q32 42 38 38" stroke="#ffb500" strokeWidth="2" strokeLinecap="round" fill="none" />
+                  </svg>
+                </div>
                 <h2 className="text-2xl font-semibold text-gray-700 mb-2">
                   No recipes found
                 </h2>
@@ -362,7 +408,7 @@ export default function RecipesPage() {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  className="bg-amber-400 text-white px-6 py-3 rounded-lg hover:bg-amber-500 transition-colors font-medium"
                 >
                   Clear All Filters
                 </button>

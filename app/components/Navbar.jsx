@@ -24,7 +24,7 @@ export function Navbar() {
     <nav className="bg-gradient-to-r from-zinc-900 to-zinc-800 border-zinc-700">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="images/logo.png" className="h-12" alt="Logo" />
+          <img src="/images/logo.png" className="h-12" alt="Logo" />
           <span className="font-cormorant text-3xl font-semibold text-white whitespace-nowrap tracking-wide">Tabakhat</span>
         </Link>
         
