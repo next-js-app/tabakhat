@@ -326,7 +326,7 @@ export default function ContactPage() {
                   className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-amber-500 transition ${
                     errors.name ? "border-amber-500" : "border-zinc-300 hover:border-amber-400"
                   }`}
-                  placeholder="Mahmoud Fawzy"
+                  placeholder="Full Name"
                 />
                 {errors.name && (
                   <p className="mt-1 text-sm text-amber-600 flex items-center">
