@@ -19,6 +19,28 @@ export const metadata = {
   title: "Tabakhat - Cook it. Love it. Share it",
   description:
     "Discover authentic and easy-to-follow Middle Eastern recipes with Tabakhat. From quick meals to traditional dishes — cook, taste, and enjoy one tabkha at a time!",
+  openGraph: {
+    title: "Tabakhat - Cook it. Love it. Share it",
+    description: "Discover authentic and easy-to-follow Middle Eastern recipes with Tabakhat. From quick meals to traditional dishes — cook, taste, and enjoy one tabkha at a time!",
+    url: "https://tabakhat.com",
+    siteName: "Tabakhat",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Tabakhat - Your Ultimate Recipe Destination",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tabakhat - Cook it. Love it. Share it",
+    description: "Discover authentic and easy-to-follow Middle Eastern recipes with Tabakhat. From quick meals to traditional dishes — cook, taste, and enjoy one tabkha at a time!",
+    images: ["/images/og-image.jpg"],
+  },
 };
 
 export default function RootLayout({ children }) {
