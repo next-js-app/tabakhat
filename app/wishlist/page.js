@@ -266,8 +266,8 @@ const WishlistPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 sm:p-6">
-      <h1 className="text-3xl font-bold text-zinc-800">My Wishlist</h1>
+    <div className="container mx-auto p-4 sm:p-6 min-h-[60vh]">
+      <h1 className="text-3xl font-bold text-zinc-800 mb-6">My Wishlist</h1>
       <AnimatePresence mode="popLayout">
         {recipes.length > 0 ? (
           <motion.div
