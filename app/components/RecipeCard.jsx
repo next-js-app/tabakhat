@@ -60,7 +60,7 @@ export const RecipeCard = ({ recipe }) => {
       });
     } else {
       removeFromWishlist(recipe.idMeal);
-      toast(`${recipe.strMeal} removed from wishlist`, {
+      toast.error(`${recipe.strMeal} removed from wishlist`, {
         duration: 3000,
         position: "bottom-right",
         style: {
@@ -124,7 +124,7 @@ export const RecipeCard = ({ recipe }) => {
           >
             <motion.svg
               className={`h-5 w-5 transition-colors ${
-                isInWishlist ? "text-amber-500" : "text-white/80"
+                isInWishlist ? "text-amber-300" : "text-white/80"
               }`}
               fill={isInWishlist ? "currentColor" : "none"}
               stroke="currentColor"

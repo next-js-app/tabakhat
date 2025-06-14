@@ -204,7 +204,7 @@ const EmptyWishlist = () => {
         >
           <Button
             asChild
-            className="bg-amber-400 hover:bg-amber-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-amber-300 hover:bg-amber-400 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <Link href="/recipes">
               Explore Recipes
@@ -266,8 +266,13 @@ const WishlistPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 min-h-[60vh]">
-      <h1 className="text-3xl font-bold text-zinc-800 mb-6">My Wishlist</h1>
+    <div className="container mx-auto p-4  sm:p-6 min-h-[60vh]">
+      <h1 className="text-5xl font-bold text-gray-900 mb-1">
+        My <span>Wishlist</span>
+      </h1>
+      <p className="text-lg md:text-lg text-zinc-600 mb-8">
+        Explore recipes and add your favorites!
+      </p>
       <AnimatePresence mode="popLayout">
         {recipes.length > 0 ? (
           <motion.div

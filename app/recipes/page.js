@@ -243,11 +243,11 @@ export default function RecipesPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+        <div className="mb-8">
+          <h1 className="text-5xl font-bold text-gray-900 mb-1">
             Discover Amazing Recipes
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl">
             Explore thousands of delicious recipes from around the world
           </p>
         </div>
@@ -257,14 +257,14 @@ export default function RecipesPage() {
           <div className="flex flex-col lg:flex-row gap-4 items-center">
             {/* Search Bar */}
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-amber-500 w-6 h-6" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-amber-400 w-6 h-6" />
               <input
                 ref={searchInputRef}
                 type="text"
                 placeholder="Search recipes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-400 focus:border-amber-400 hover:border-amber-400 transition-all duration-200 text-zinc-800 bg-zinc-50 placeholder-zinc-400 text-lg shadow-sm outline-none"
+                className="w-full pl-12 pr-4 py-4 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-300 focus:border-amber-300 hover:border-amber-300 transition-all duration-200 text-zinc-800 bg-zinc-50 placeholder-zinc-400 text-lg shadow-sm outline-none"
               />
             </div>
 
@@ -276,17 +276,17 @@ export default function RecipesPage() {
                 <Listbox value={selectedCategory} onChange={setSelectedCategory}>
                   {({ open }) => (
                     <div className="relative">
-                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-400 focus:border-amber-400 hover:border-amber-400 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
+                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-300 focus:border-amber-300 hover:border-amber-300 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
                         <span>{selectedCategory || 'All Categories'}</span>
                         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-900 text-xs">▼</span>
                       </Listbox.Button>
                       <Listbox.Options className="absolute z-20 mt-2 w-full max-h-60 overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-base">
                         <Listbox.Option key="all" value="" className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
-                          {({ selected }) => (<><span className="block truncate">All Categories</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                          {({ selected }) => (<><span className="block truncate">All Categories</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-300">✔</span>) : null}</>)}
                         </Listbox.Option>
                         {categories.map((category) => (
                           <Listbox.Option key={category.idCategory} value={category.strCategory} className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
-                            {({ selected }) => (<><span className="block truncate">{category.strCategory}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                            {({ selected }) => (<><span className="block truncate">{category.strCategory}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-300">✔</span>) : null}</>)}
                           </Listbox.Option>
                         ))}
                       </Listbox.Options>
@@ -301,17 +301,17 @@ export default function RecipesPage() {
                 <Listbox value={selectedArea} onChange={setSelectedArea}>
                   {({ open }) => (
                     <div className="relative">
-                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-400 focus:border-amber-400 hover:border-amber-400 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
+                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-300 focus:border-amber-300 hover:border-amber-300 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
                         <span>{selectedArea || 'All Areas'}</span>
                         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-900 text-xs">▼</span>
                       </Listbox.Button>
                       <Listbox.Options className="absolute z-20 mt-2 w-full max-h-60 overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-base">
                         <Listbox.Option key="all" value="" className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
-                          {({ selected }) => (<><span className="block truncate">All Areas</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                          {({ selected }) => (<><span className="block truncate">All Areas</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-300">✔</span>) : null}</>)}
                         </Listbox.Option>
                         {areas.map((area) => (
                           <Listbox.Option key={area.strArea} value={area.strArea} className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
-                            {({ selected }) => (<><span className="block truncate">{area.strArea}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                            {({ selected }) => (<><span className="block truncate">{area.strArea}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-300">✔</span>) : null}</>)}
                           </Listbox.Option>
                         ))}
                       </Listbox.Options>
@@ -326,17 +326,17 @@ export default function RecipesPage() {
                 <Listbox value={selectedIngredient} onChange={setSelectedIngredient}>
                   {({ open }) => (
                     <div className="relative">
-                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-400 focus:border-amber-400 hover:border-amber-400 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
+                      <Listbox.Button className="pl-10 pr-8 py-3 border border-zinc-200 rounded-xl focus:ring-1 focus:ring-amber-300 focus:border-amber-300 hover:border-amber-300 transition-all duration-200 bg-white text-zinc-700 shadow-sm w-full sm:w-auto flex items-center justify-between cursor-pointer">
                         <span>{selectedIngredient || 'All Ingredients'}</span>
                         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-900 text-xs">▼</span>
                       </Listbox.Button>
                       <Listbox.Options className="absolute z-20 mt-2 w-full max-h-60 overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-base">
                         <Listbox.Option key="all" value="" className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
-                          {({ selected }) => (<><span className="block truncate">All Ingredients</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                          {({ selected }) => (<><span className="block truncate">All Ingredients</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-300">✔</span>) : null}</>)}
                         </Listbox.Option>
                         {ingredients.slice(0, 50).map((ingredient) => (
                           <Listbox.Option key={ingredient.idIngredient} value={ingredient.strIngredient} className={({ active, selected }) => classNames(active ? 'bg-amber-50 text-amber-700' : 'text-zinc-700', selected ? 'font-semibold bg-amber-100' : '', 'cursor-pointer select-none relative py-2 pl-10 pr-4 rounded-lg transition-colors duration-150')}>
-                            {({ selected }) => (<><span className="block truncate">{ingredient.strIngredient}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400">✔</span>) : null}</>)}
+                            {({ selected }) => (<><span className="block truncate">{ingredient.strIngredient}</span>{selected ? (<span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-300">✔</span>) : null}</>)}
                           </Listbox.Option>
                         ))}
                       </Listbox.Options>
@@ -351,7 +351,7 @@ export default function RecipesPage() {
                 selectedIngredient) && (
                   <button
                     onClick={clearFilters}
-                    className="flex items-center gap-2 px-4 py-3 bg-amber-400 text-white rounded-xl hover:bg-amber-500 transition-colors font-medium shadow-md mt-2 sm:mt-0"
+                    className="flex items-center gap-2 px-4 py-3 bg-amber-300 text-white rounded-xl hover:bg-amber-400 transition-colors font-medium shadow-md mt-2 sm:mt-0"
                   >
                     <Loader2 className="w-4 h-4" />
                     Clear
@@ -379,7 +379,7 @@ export default function RecipesPage() {
         <div className="relative">
           {(loading || filterLoading || searchLoading) && (
             <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 className="w-12 h-12 animate-spin text-amber-400 mb-4" />
+              <Loader2 className="w-12 h-12 animate-spin text-amber-300 mb-4" />
               <span className="text-lg text-zinc-600 font-medium">Loading Recipes</span>
             </div>
           )}
@@ -408,7 +408,7 @@ export default function RecipesPage() {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="bg-amber-400 text-white px-6 py-3 rounded-lg hover:bg-amber-500 transition-colors font-medium"
+                  className="bg-amber-300 text-white px-6 py-3 rounded-lg hover:bg-amber-400 transition-colors font-medium"
                 >
                   Clear All Filters
                 </button>

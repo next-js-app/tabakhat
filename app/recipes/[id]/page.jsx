@@ -86,7 +86,7 @@ export default function RecipeDetailPage() {
       <div className="min-h-screen bg-zinc-50">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-20">
-            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-amber-400" />
+            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-amber-300" />
             <h2 className="text-2xl font-semibold text-zinc-700 mb-2">
               Loading Recipe...
             </h2>
@@ -104,7 +104,7 @@ export default function RecipeDetailPage() {
       <div className="min-h-screen bg-zinc-50">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8 text-center">
-            <div className="text-amber-400 text-6xl mb-4">⚠️</div>
+            <div className="text-amber-300 text-6xl mb-4">⚠️</div>
             <h2 className="text-2xl font-bold text-zinc-800 mb-2">
               Recipe Not Found
             </h2>
@@ -118,7 +118,7 @@ export default function RecipeDetailPage() {
               </button>
               <Link
                 href="/recipes"
-                className="bg-amber-400 text-white px-6 py-3 rounded-lg hover:bg-amber-500 transition-colors font-medium"
+                className="bg-amber-300 text-white px-6 py-3 rounded-lg hover:bg-amber-300 transition-colors font-medium"
               >
                 Browse Recipes
               </Link>
@@ -144,7 +144,7 @@ export default function RecipeDetailPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="flex items-center cursor-pointer gap-2 text-zinc-50 hover:text-amber-400 transition-colors font-medium bg-zinc-800 px-4 py-2 rounded-lg shadow-sm"
+            className="flex items-center cursor-pointer gap-2 text-zinc-50 hover:text-amber-300 transition-colors font-medium bg-zinc-800 px-4 py-2 rounded-lg shadow-sm"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Recipes
