@@ -6,7 +6,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useWishlist } from "@/hooks/use-wishlist";
 
 /**
@@ -84,7 +84,7 @@ export const RecipeCard = ({ recipe }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
 
         {isHydrated && (
-          <div
+          <motion.div
             onClick={handleWishlistToggle}
             className="absolute top-3 right-3 z-20 h-9 w-9 rounded-full bg-white/30 backdrop-blur-sm transition-all hover:bg-white/50 flex items-center justify-center cursor-pointer"
             role="button"
@@ -96,13 +96,35 @@ export const RecipeCard = ({ recipe }) => {
               }
             }}
             aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <Heart
-              className={`h-5 w-5 transition-colors fill-current stroke-current ${
-                isInWishlist ? "text-yellow-400" : "text-white/80"
+            <motion.svg
+              className={`h-5 w-5 transition-colors ${
+                isInWishlist ? "text-amber-500" : "text-white/80"
               }`}
-            />
-          </div>
+              fill={isInWishlist ? "currentColor" : "none"}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              initial={false}
+              animate={{
+                scale: isInWishlist ? [1, 1.2, 1] : 1,
+                rotate: isInWishlist ? [0, 10, -10, 0] : 0,
+              }}
+              transition={{
+                duration: 0.5,
+                ease: "easeInOut",
+              }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </motion.svg>
+          </motion.div>
         )}
 
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white z-20">
@@ -118,7 +140,7 @@ export const RecipeCard = ({ recipe }) => {
             size="sm"
             className="border border-yellow-400 bg-transparent opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0  group-hover:shadow-md transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] rounded-full"
           >
-            <Link href={`/recipesId/${recipe.idMeal}`}>
+            <Link href={`/recipes/${recipe.idMeal}`}>
               Show Details
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>

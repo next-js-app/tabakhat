@@ -23,7 +23,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 py-12 border-b border-zinc-700">
         <div className="space-y-4 text-center md:text-left">
           <Link href="/" className="inline-flex items-center space-x-3">
-            <img src="images/logo.png" className="h-10" alt="Logo" />
+            <img src="/images/logo.png" className="h-10" alt="Logo" />
             <span className="font-cormorant text-2xl font-bold text-white tracking-wide">Tabakhat</span>
           </Link>
           <p className="text-zinc-400 text-sm font-inter">
